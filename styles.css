@@ -36,7 +36,8 @@ h1{font-size:40px;line-height:1.07;letter-spacing:-.04em;margin:0 0 16px}
 .map{height:270px;width:100%;border-radius:22px;position:relative;overflow:hidden;background:#0b181d;border:1px solid #305057}
 .basemap{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.34;filter:grayscale(1) brightness(.8)}
 .tile{position:absolute;width:256px;height:256px;max-width:none;pointer-events:none}
-.map svg{position:absolute;inset:0;width:100%;height:100%}
+.map-plane{position:absolute;inset:0;transform-origin:50% calc(100% - 59px);transform:perspective(650px) rotateX(35deg);pointer-events:none}
+.map-plane>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .route-halo{fill:none;stroke:#06191d;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
 .route-line{fill:none;stroke:#5cf0db;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
 .position-dot{fill:#fff;stroke:#28cfbd;stroke-width:4}
@@ -46,27 +47,30 @@ h1{font-size:40px;line-height:1.07;letter-spacing:-.04em;margin:0 0 16px}
 .nav-pointer{position:absolute;left:50%;bottom:40px;width:32px;height:38px;transform:translateX(-50%);z-index:3;filter:drop-shadow(0 0 4px #00191a)}
 .nav-pointer svg{width:100%;height:100%}
 .nav-pointer path{fill:#fff;stroke:#33d6c6;stroke-width:2;stroke-linejoin:round}
-#guidance{display:flex;flex-direction:column;padding:20px 24px 8px;overflow:hidden;gap:9px}
-.topline{display:flex;justify-content:space-between;align-items:center;color:#b9d3d3;font-size:15px;font-weight:700;min-height:22px}
-.instruction{display:flex;gap:18px;align-items:center;min-height:126px}
-.turn-arrow{font-family:Arial,sans-serif;font-size:94px;line-height:1;color:#64f3df;width:120px;text-align:center;flex:none}
-.turn-copy{min-width:0}
-.turn-distance{font-size:43px;font-weight:800;letter-spacing:-.05em;white-space:nowrap}
-.turn-text{font-size:25px;font-weight:750;line-height:1.1}
-.road-name{font-size:17px;color:#b9d3d3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:365px;margin-top:5px}
-.lane-panel{background:#102126;border:1px solid #31535a;border-radius:14px;padding:9px 13px;min-height:69px}
-.lanes{display:flex;gap:8px;margin-top:6px}
-.lane{border-radius:8px;border:1px solid #587078;padding:5px 12px;font-size:18px;color:#abbcbe}
+#guidance{display:flex;flex-direction:column;padding:14px 20px 7px;overflow:hidden;gap:6px}
+.topline{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;color:#b9d3d3;font-size:14px;font-weight:700;min-height:24px}
+#gps-status,#remaining{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#current-time{font-size:18px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+#remaining{text-align:right}
+.instruction{display:flex;gap:12px;align-items:center;flex:none;min-height:96px;max-height:116px;overflow:hidden}
+.turn-arrow{font-family:Arial,sans-serif;font-size:76px;line-height:1;color:#64f3df;width:92px;text-align:center;flex:none}
+.turn-copy{min-width:0;flex:1;overflow:hidden}
+.turn-distance{font-size:34px;font-weight:800;letter-spacing:-.05em;white-space:nowrap}
+.turn-text{font-size:20px;font-weight:750;line-height:1.08;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.road-name{font-size:15px;color:#b9d3d3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-top:3px}
+.lane-panel{background:#102126;border:1px solid #31535a;border-radius:14px;padding:7px 11px;min-height:54px}
+.lanes{display:flex;gap:8px;margin-top:4px}
+.lane{border-radius:8px;border:1px solid #587078;padding:4px 10px;font-size:16px;color:#abbcbe}
 .lane.active{border-color:#65efdc;color:#65efdc;background:#173e3c}
 .lane.valid{border-color:#72a6a4;color:#c3dad8}
-#nav-map{height:auto;min-height:172px;flex:1}
+#nav-map{height:auto;min-height:0;flex:1 1 0}
 #nav-map.uncertain{opacity:.25}
-.footer{display:flex;gap:5px;justify-content:space-between;min-height:59px}
+.footer{display:flex;gap:5px;justify-content:space-between;min-height:54px;flex:none}
 .footer>div{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;background:#0a181c;border-radius:12px;padding:8px 10px}
 .footer .micro{font-size:10px;white-space:nowrap}
-.footer strong{font-size:20px;white-space:nowrap}
-.menu-button{align-self:center;background:transparent;border:0;font-size:14px;min-height:36px;color:#a8c9c8;padding:0 14px}
+.footer strong{font-size:18px;white-space:nowrap}
+.menu-button{align-self:center;background:transparent;border:0;font-size:14px;min-height:32px;color:#a8c9c8;padding:0 14px}
 #guidance .credit{margin:0;font-size:10px}
 .options{position:absolute;inset:0;background:rgba(0,0,0,.94);display:flex;flex-direction:column;justify-content:center;gap:14px;padding:50px;z-index:5}
 .options button{min-height:72px;font-size:20px}
-@media(max-height:520px){.eyebrow{margin-bottom:12px}h1{font-size:32px}.map{height:180px}.instruction{min-height:100px}.turn-arrow{font-size:70px;width:95px}.turn-distance{font-size:34px}.turn-text{font-size:21px}}
+@media(max-height:520px){.eyebrow{margin-bottom:12px}h1{font-size:32px}.map{height:180px}#guidance{padding:10px 16px 5px;gap:4px}.instruction{min-height:80px;max-height:100px}.turn-arrow{font-size:64px;width:78px}.turn-distance{font-size:29px}.turn-text{font-size:18px}.footer{min-height:48px}.footer strong{font-size:16px}}

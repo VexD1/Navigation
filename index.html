@@ -9,8 +9,8 @@
   <title>Navigation</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=5">
-  <script src="./app.js?v=5" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=6">
+  <script src="./app.js?v=6" defer></script>
 </head>
 <body>
   <main id="app">
@@ -36,13 +36,13 @@
     </section>
 
     <section id="guidance" class="screen hidden">
-      <div class="topline"><span id="gps-status">GPS live</span><span id="remaining">—</span></div>
+      <div class="topline"><span id="gps-status">GPS live</span><time id="current-time" aria-label="Current time">--:--</time><span id="remaining">—</span></div>
       <div class="instruction">
         <div id="turn-arrow" class="turn-arrow" aria-hidden="true">↑</div>
         <div class="turn-copy"><div id="turn-distance" class="turn-distance">—</div><div id="turn-text" class="turn-text">Continue</div><div id="road-name" class="road-name"></div></div>
       </div>
       <div id="lane-panel" class="lane-panel hidden"><div class="micro">LANES AHEAD</div><div id="lanes" class="lanes"></div></div>
-      <div id="nav-map" class="map"><div class="basemap"></div><svg viewBox="0 0 536 220" preserveAspectRatio="none" aria-hidden="true"><path class="route-halo"></path><path class="route-line"></path><circle class="maneuver-dot" r="9"></circle><circle class="position-dot" r="8"></circle><path class="position-arrow" d="M0 -15 L11 12 L0 7 L-11 12 Z"></path></svg><div class="nav-pointer" aria-hidden="true"><svg viewBox="0 0 32 38"><path d="M16 2 30 34 16 27 2 34Z"></path></svg></div></div>
+      <div id="nav-map" class="map"><div class="map-plane"><div class="basemap"></div><svg viewBox="0 0 536 220" preserveAspectRatio="none" aria-hidden="true"><path class="route-halo"></path><path class="route-line"></path><circle class="maneuver-dot" r="9"></circle><circle class="position-dot" r="8"></circle><path class="position-arrow" d="M0 -15 L11 12 L0 7 L-11 12 Z"></path></svg></div><div class="nav-pointer" aria-hidden="true"><svg viewBox="0 0 32 38"><path d="M16 2 30 34 16 27 2 34Z"></path></svg></div></div>
       <div class="footer"><div><span class="micro">ETA</span><strong id="eta">—</strong></div><div><span class="micro">MAP LIMIT</span><strong id="speed-limit">—</strong></div><div><span class="micro">SPEED</span><strong id="speed">—</strong></div></div>
       <button id="nav-menu-button" class="menu-button" type="button">Route options</button>
       <div id="nav-options" class="options hidden"><button id="retry-location-button" type="button">Retry location</button><button id="reroute-button" type="button">Refresh route</button><button id="stop-button" type="button">End guidance</button><button id="close-options" type="button">Close</button></div>

@@ -24,6 +24,12 @@ let mapCenters = new WeakMap();
 let postcodeBuffer = '';
 let pendingPostcode = null;
 
+function updateClock() {
+  const now = new Date();
+  $('current-time').dateTime = now.toISOString();
+  $('current-time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 function showScreen(name) {
   screen = name;
   for (const id of ['setup', 'guidance']) $(id).classList.toggle('hidden', id !== name);
@@ -260,7 +266,16 @@ function renderMap(element, center, zoom, points, marker, heading = null, turn =
   const [cx, cy] = projectWorld(center, zoom);
   const tileZoom = Math.floor(zoom);
   const tileSpan = 256 * 2 ** (zoom - tileZoom);
-  const radius = Math.hypot(width, height) / 2;
+  const pitch = 35 * Math.PI / 180, perspective = 650;
+  const anchorX = width / 2, anchorY = height - 59;
+  let radius = 0;
+  for (const x of [0, width]) for (const y of [0, height]) {
+    const dx = x - anchorX, dy = y - anchorY;
+    const planeY = dy * perspective / (perspective * Math.cos(pitch) + dy * Math.sin(pitch));
+    const planeX = dx * (perspective - planeY * Math.sin(pitch)) / perspective;
+    radius = Math.max(radius, Math.hypot(anchorX + planeX - width / 2, anchorY + planeY - height / 2));
+  }
+  radius += 2;
   const leftTile = Math.floor((cx - radius) / tileSpan), topTile = Math.floor((cy - radius) / tileSpan);
   const rightTile = Math.floor((cx + radius) / tileSpan), bottomTile = Math.floor((cy + radius) / tileSpan);
   const maxTile = 2 ** tileZoom;
@@ -340,7 +355,11 @@ function turnSymbol(instruction) {
   return '↑';
 }
 function shortInstruction(instruction) {
-  return instruction.replace(/^Drive\s+/i, 'Continue ').replace(/\.$/, '').split('. ')[0].slice(0, 86);
+  return instruction.replace(/^Drive\s+/i, 'Continue ')
+    .replace(/Exit the roundabout onto/i, 'Exit roundabout to')
+    .replace(/Take the (\d+(?:st|nd|rd|th)) exit onto/i, 'Take $1 exit to')
+    .replace(/\bSquare\b/g, 'Sq').replace(/\bAvenue\b/g, 'Ave').replace(/\bBoulevard\b/g, 'Blvd')
+    .replace(/\.$/, '').split('. ')[0].slice(0, 70);
 }
 function nextManeuverIndex(at) {
   return route.maneuvers.findIndex((item, i) => i > 0 && item.at >= at - 12);
@@ -452,6 +471,7 @@ function startGuidance() {
   demoTimer = null;
   lastAnnounced = -1;
   showScreen('guidance');
+  updateClock();
   $('nav-menu-button').focus({ preventScroll: true });
   updateGuidance();
   if (isDemo) {
@@ -542,8 +562,14 @@ document.addEventListener('visibilitychange', () => {
     watchId = null;
     if (screen === 'guidance' && !isDemo) showUnavailable('App inactive · GPS paused');
   } else if (!isDemo && (screen === 'guidance' || screen === 'setup')) {
+    updateClock();
     locationFix = null;
     startWatching();
   }
 });
-setInterval(() => { if (screen === 'guidance' && !isDemo && !validFix(locationFix)) showUnavailable('GPS unavailable or inaccurate'); }, 2000);
+window.addEventListener('resize', () => { if (screen === 'guidance') updateGuidance(); });
+updateClock();
+setInterval(() => {
+  updateClock();
+  if (screen === 'guidance' && !isDemo && !validFix(locationFix)) showUnavailable('GPS unavailable or inaccurate');
+}, 2000);

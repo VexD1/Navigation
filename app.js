@@ -440,7 +440,7 @@ function updateGuidance() {
   $('gps-status').textContent = isDemo ? 'DEMO · simulated position' : `GPS live · ±${Math.round(locationFix.accuracy)} m`;
   $('remaining').textContent = formatDistance(remaining) + ' left';
   $('turn-arrow').textContent = maneuver ? turnSymbol(maneuver.instruction) : '↑';
-  $('turn-distance').textContent = formatDistance(distance);
+  $('turn-distance').textContent = `Next in ${formatDistance(distance)}`;
   $('turn-text').textContent = maneuver ? shortInstruction(maneuver.instruction) : remaining < 40 ? 'Arriving' : 'Continue to destination';
   $('road-name').textContent = maneuver?.street || destination?.name || '';
   $('eta').textContent = formatEta(route.duration * (remaining / Math.max(1, route.distance)));

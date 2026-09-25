@@ -1,0 +1,66 @@
+:root{color-scheme:dark;font-family:Inter,Arial,sans-serif;font-synthesis:none}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff}
+button,input{font:inherit}
+button{border:1px solid #496064;background:#10272c;color:#f7ffff;border-radius:18px;min-height:54px;padding:10px 18px;cursor:pointer;font-weight:700}
+button:focus-visible,input:focus-visible{outline:3px solid #63f3e0;outline-offset:3px}
+button:active{transform:scale(.97)}
+input{width:100%;min-height:54px;background:#102126;color:#fff;border:1px solid #597077;border-radius:14px;padding:12px 16px}
+input::placeholder{color:#93a5ab}
+.hidden{display:none!important}
+#app{width:min(600px,100vw);height:min(600px,100dvh);min-height:360px;margin:auto;overflow:hidden;position:relative;background:#000}
+.screen{height:100%;padding:24px;overflow-y:auto;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.eyebrow,.micro{font-size:13px;letter-spacing:.15em;color:#74d9ce;font-weight:800}
+.eyebrow{margin:4px 0 26px}
+h1{font-size:40px;line-height:1.07;letter-spacing:-.04em;margin:0 0 16px}
+.muted,.fine{color:#c0cdcf;line-height:1.35}
+.muted{font-size:18px;min-height:48px;margin:0 0 16px}
+.fine{font-size:14px;margin:12px 0}
+.panel{padding:16px;margin:0 0 12px;border-radius:20px;background:#0a181c;display:grid;gap:10px}
+label{font-size:15px;font-weight:700;color:#c5d7da}
+.wide{width:100%;background:#5ce7d6;color:#001b1a;border:0;font-size:20px;min-height:64px}
+.quiet{background:transparent;border:0;color:#d7e4e5;min-height:54px;width:100%;margin-top:8px}
+.results{display:grid;gap:8px;margin-top:12px}
+.results button{text-align:left;display:grid;gap:2px;background:#102126}
+.results small{color:#b7c9ca;font-size:13px;font-weight:400}
+.credit{font-size:11px;color:#93a5ab;text-align:center;margin:16px 0 2px}
+.map{height:270px;width:100%;border-radius:22px;position:relative;overflow:hidden;background:#0b181d;border:1px solid #305057}
+.basemap{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.34;filter:grayscale(1) brightness(.8)}
+#preview-map .basemap{opacity:.55}
+.tile{position:absolute;width:256px;height:256px;max-width:none;pointer-events:none}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.route-halo{fill:none;stroke:#06191d;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+.route-line{fill:none;stroke:#5cf0db;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.position-dot{fill:#fff;stroke:#28cfbd;stroke-width:4}
+.position-arrow{fill:#fff;stroke:#006b69;stroke-width:2;stroke-linejoin:round}
+.maneuver-dot{fill:#06191d;stroke:#5cf0db;stroke-width:4}
+#nav-map .position-dot,#nav-map .position-arrow{display:none!important}
+.nav-pointer{position:absolute;left:50%;bottom:40px;width:32px;height:38px;transform:translateX(-50%);z-index:3;filter:drop-shadow(0 0 4px #00191a)}
+.nav-pointer svg{width:100%;height:100%}
+.nav-pointer path{fill:#fff;stroke:#33d6c6;stroke-width:2;stroke-linejoin:round}
+.summary{font-size:24px;line-height:1.2;margin:18px 0 24px;font-weight:700}
+#guidance{display:flex;flex-direction:column;padding:20px 24px 8px;overflow:hidden;gap:9px}
+.topline{display:flex;justify-content:space-between;align-items:center;color:#b9d3d3;font-size:15px;font-weight:700;min-height:22px}
+.instruction{display:flex;gap:18px;align-items:center;min-height:126px}
+.turn-arrow{font-family:Arial,sans-serif;font-size:94px;line-height:1;color:#64f3df;width:120px;text-align:center;flex:none}
+.turn-copy{min-width:0}
+.turn-distance{font-size:43px;font-weight:800;letter-spacing:-.05em;white-space:nowrap}
+.turn-text{font-size:25px;font-weight:750;line-height:1.1}
+.road-name{font-size:17px;color:#b9d3d3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:365px;margin-top:5px}
+.lane-panel{background:#102126;border:1px solid #31535a;border-radius:14px;padding:9px 13px;min-height:69px}
+.lanes{display:flex;gap:8px;margin-top:6px}
+.lane{border-radius:8px;border:1px solid #587078;padding:5px 12px;font-size:18px;color:#abbcbe}
+.lane.active{border-color:#65efdc;color:#65efdc;background:#173e3c}
+.lane.valid{border-color:#72a6a4;color:#c3dad8}
+#nav-map{height:auto;min-height:172px;flex:1}
+#nav-map.uncertain{opacity:.25}
+.footer{display:flex;gap:5px;justify-content:space-between;min-height:59px}
+.footer>div{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;background:#0a181c;border-radius:12px;padding:8px 10px}
+.footer .micro{font-size:10px;white-space:nowrap}
+.footer strong{font-size:20px;white-space:nowrap}
+.menu-button{align-self:center;background:transparent;border:0;font-size:14px;min-height:36px;color:#a8c9c8;padding:0 14px}
+#guidance .credit{margin:0;font-size:10px}
+.options{position:absolute;inset:0;background:rgba(0,0,0,.94);display:flex;flex-direction:column;justify-content:center;gap:14px;padding:50px;z-index:5}
+.options button{min-height:72px;font-size:20px}
+@media(max-height:520px){.eyebrow{margin-bottom:12px}h1{font-size:32px}.map{height:180px}.instruction{min-height:100px}.turn-arrow{font-size:70px;width:95px}.turn-distance{font-size:34px}.turn-text{font-size:21px}}

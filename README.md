@@ -18,7 +18,7 @@ It cannot draw a line locked to the actual road seen through the lenses. A Web A
 ## Use
 
 1. Open Navigation and choose **Use my location**. Grant location permission. The position comes from the paired phone.
-2. Enter a place or full address. Search runs only when submitted; choose a result.
+2. Enter a place, address, or UK postcode. For a postcode without voice, select **Enter postcode with controls**, move between the on-screen letters and numbers, and pinch to add each character. Select **Find postcode** when complete. The space is added automatically. The regular text field remains available for handwriting or a keyboard.
 3. Check the route preview, then choose **Start guidance**. Set the destination before driving.
 4. **Route options** offers a route refresh or end guidance.
 

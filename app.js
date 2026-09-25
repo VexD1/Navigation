@@ -21,6 +21,7 @@ let routeUncertain = false;
 let rerouting = false;
 let lastAnnounced = -1;
 let mapCenters = new WeakMap();
+let postcodeBuffer = '';
 
 function showScreen(name) {
   screen = name;
@@ -28,6 +29,51 @@ function showScreen(name) {
 }
 
 function status(text) { $('setup-status').textContent = text; }
+function normalizedPostcode(value) { return value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7); }
+function isUkPostcode(value) { return /^(?:GIR0AA|[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2})$/.test(value); }
+function displayPostcode(value) { return isUkPostcode(value) ? `${value.slice(0, -3)} ${value.slice(-3)}` : value; }
+function updatePostcodePad() {
+  $('postcode-preview').textContent = postcodeBuffer ? displayPostcode(postcodeBuffer) : '_';
+  $('postcode-hint').textContent = isUkPostcode(postcodeBuffer) ? 'Postcode ready. Select Find postcode.' : 'Pinch letters and numbers. The space is added for you.';
+}
+function closePostcodePad() {
+  $('postcode-pad').classList.add('hidden');
+  $('postcode-pad-button').focus();
+}
+for (const row of ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM', '1234567890']) {
+  for (const character of row) {
+    const key = document.createElement('button');
+    key.type = 'button';
+    key.textContent = character;
+    key.setAttribute('aria-label', `Add ${character}`);
+    key.addEventListener('click', () => {
+      if (postcodeBuffer.length < 7) postcodeBuffer += character;
+      updatePostcodePad();
+    });
+    $('postcode-keys').append(key);
+  }
+  for (let i = row.length; i < 10; i++) {
+    const spacer = document.createElement('span');
+    spacer.setAttribute('aria-hidden', 'true');
+    $('postcode-keys').append(spacer);
+  }
+}
+$('postcode-pad-button').addEventListener('click', () => {
+  const existing = $('destination').value.trim();
+  postcodeBuffer = /^[A-Z0-9 ]{0,8}$/i.test(existing) ? normalizedPostcode(existing) : '';
+  updatePostcodePad();
+  $('postcode-pad').classList.remove('hidden');
+  document.querySelector('#postcode-keys button').focus();
+});
+$('postcode-backspace').addEventListener('click', () => { postcodeBuffer = postcodeBuffer.slice(0, -1); updatePostcodePad(); });
+$('postcode-clear').addEventListener('click', () => { postcodeBuffer = ''; updatePostcodePad(); document.querySelector('#postcode-keys button').focus(); });
+$('postcode-cancel').addEventListener('click', closePostcodePad);
+$('postcode-use').addEventListener('click', () => {
+  if (!isUkPostcode(postcodeBuffer)) { $('postcode-hint').textContent = 'Enter a full UK postcode, for example SW1A 1AA.'; return; }
+  $('destination').value = displayPostcode(postcodeBuffer);
+  closePostcodePad();
+  $('destination-form').requestSubmit();
+});
 function validFix(fix) { return fix && Date.now() - fix.timestamp < 12000 && fix.accuracy <= 60; }
 function coords(fix) { return [fix.lon, fix.lat]; }
 function meters(a, b) {
@@ -119,6 +165,7 @@ async function searchDestination(query) {
   url.searchParams.set('format', 'jsonv2');
   url.searchParams.set('limit', '5');
   url.searchParams.set('addressdetails', '0');
+  if (isUkPostcode(normalizedPostcode(query))) url.searchParams.set('countrycodes', 'gb');
   const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
   if (!response.ok) throw new Error('Place search unavailable');
   const results = await response.json();
@@ -428,7 +475,10 @@ function stopGuidance() {
 $('location-button').addEventListener('click', startWatching);
 $('destination-form').addEventListener('submit', async event => {
   event.preventDefault();
-  const query = $('destination').value.trim();
+  const entered = $('destination').value.trim();
+  const postcode = normalizedPostcode(entered);
+  const query = isUkPostcode(postcode) ? displayPostcode(postcode) : entered;
+  if (isUkPostcode(postcode)) $('destination').value = query;
   if (query.length < 3) { status('Enter at least three characters for your destination.'); return; }
   if (!validFix(locationFix)) { status('Wait for a fresh, accurate location first.'); return; }
   status('Finding places…');
@@ -450,6 +500,7 @@ $('destination-form').addEventListener('submit', async event => {
       });
       $('search-results').append(button);
     }
+    document.querySelector('#search-results button')?.focus();
   } catch (error) { if (error.name !== 'AbortError') status('Place search unavailable. Try again later.'); }
 });
 $('demo-button').addEventListener('click', async () => {

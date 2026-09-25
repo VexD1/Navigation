@@ -9,8 +9,8 @@
   <title>Navigation</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./app.js?v=1" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=2">
+  <script src="./app.js?v=2" defer></script>
 </head>
 <body>
   <main id="app">
@@ -20,13 +20,24 @@
       <p id="setup-status" class="muted" role="status">Allow location, then choose a destination.</p>
       <button id="location-button" class="wide" type="button">Use my location</button>
       <form id="destination-form" class="panel hidden">
-        <label for="destination">Destination</label>
-        <input id="destination" type="text" autocomplete="off" placeholder="Place or address" aria-label="Destination place or address">
+        <label for="destination">Destination postcode or place</label>
+        <input id="destination" type="text" autocomplete="postal-code" autocapitalize="characters" spellcheck="false" placeholder="e.g. SW1A 1AA" aria-label="Destination postcode or place">
+        <button id="postcode-pad-button" type="button">Enter postcode with controls</button>
         <button type="submit">Find destination</button>
       </form>
       <div id="search-results" class="results" aria-live="polite"></div>
       <button id="demo-button" class="quiet" type="button">Preview a sample route</button>
       <div class="credit">Map data © OpenStreetMap contributors · Free public routing preview</div>
+    </section>
+
+    <section id="postcode-pad" class="postcode-pad hidden" aria-label="Postcode keypad">
+      <div class="eyebrow">DESTINATION</div>
+      <h1>Enter postcode</h1>
+      <div id="postcode-preview" class="postcode-preview" aria-live="polite">_</div>
+      <p id="postcode-hint" class="postcode-hint">Pinch letters and numbers. The space is added for you.</p>
+      <div id="postcode-keys" class="postcode-keys" aria-label="Postcode characters"></div>
+      <div class="postcode-actions"><button id="postcode-backspace" type="button">⌫ Delete</button><button id="postcode-clear" type="button">Clear</button></div>
+      <div class="postcode-actions"><button id="postcode-cancel" type="button">Cancel</button><button id="postcode-use" type="button">Find postcode</button></div>
     </section>
 
     <section id="preview" class="screen hidden">

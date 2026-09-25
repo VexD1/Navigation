@@ -24,6 +24,17 @@ label{font-size:15px;font-weight:700;color:#c5d7da}
 .results{display:grid;gap:8px;margin-top:12px}
 .results button{text-align:left;display:grid;gap:2px;background:#102126}
 .results small{color:#b7c9ca;font-size:13px;font-weight:400}
+.postcode-pad{position:absolute;inset:0;z-index:10;background:#000;padding:20px 24px;overflow-y:auto}
+.postcode-pad .eyebrow{margin:0 0 8px}
+.postcode-pad h1{font-size:32px;margin:0 0 10px}
+.postcode-preview{min-height:54px;border:1px solid #4e9b92;background:#0d2526;border-radius:15px;padding:9px 15px;font-size:30px;font-weight:800;letter-spacing:.12em}
+.postcode-hint{font-size:14px;color:#b8c9ca;margin:8px 0 14px}
+.postcode-keys{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+.postcode-keys button{min-height:57px;min-width:0;border-radius:11px;padding:0;font-size:21px;background:#132a2e}
+.postcode-keys button:focus-visible{background:#1d514e}
+.postcode-actions{display:flex;gap:10px;margin-top:10px}
+.postcode-actions button{flex:1;min-height:56px}
+#postcode-use{background:#5ce7d6;color:#001b1a;border:0}
 .credit{font-size:11px;color:#93a5ab;text-align:center;margin:16px 0 2px}
 .map{height:270px;width:100%;border-radius:22px;position:relative;overflow:hidden;background:#0b181d;border:1px solid #305057}
 .basemap{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.34;filter:grayscale(1) brightness(.8)}

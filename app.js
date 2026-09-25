@@ -217,6 +217,7 @@ async function loadSpeedLimits(targetRoute, controller) {
 
 function showPreview() {
   showScreen('preview');
+  $('start-button').focus({ preventScroll: true });
   $('preview-name').textContent = destination?.name || 'Destination';
   $('preview-summary').textContent = `${formatDistance(route.distance)} · about ${Math.max(1, Math.round(route.duration / 60))} min`;
   const middle = route.points[Math.floor(route.points.length / 2)];

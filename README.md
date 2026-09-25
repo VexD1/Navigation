@@ -2,6 +2,10 @@
 
 A free, experimental driving guidance Web App for the 600 × 600 Meta Ray-Ban Display. It uses the paired phone's location, OpenStreetMap place search and map tiles, and the public Valhalla routing service. No account, API key, or payment method is required.
 
+## Add to glasses
+
+In the Meta AI phone app, add **Navigation** as a Web App connection using **https://vexd1.github.io/Navigation/**. Open it on the glasses to grant location permission. The same URL receives future updates.
+
 ## What it shows
 
 - A large next-turn arrow, distance, road name, remaining distance, and ETA.

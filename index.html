@@ -9,22 +9,17 @@
   <title>Navigation</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=2">
-  <script src="./app.js?v=2" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=3">
+  <script src="./app.js?v=3" defer></script>
 </head>
 <body>
   <main id="app">
     <section id="setup" class="screen">
       <div class="eyebrow">META DISPLAY · NAVIGATION</div>
       <h1>Where to?</h1>
-      <p id="setup-status" class="muted" role="status">Allow location, then choose a destination.</p>
+      <p id="setup-status" class="muted" role="status">Choose a postcode and allow location.</p>
       <button id="location-button" class="wide" type="button">Use my location</button>
-      <form id="destination-form" class="panel hidden">
-        <label for="destination">Destination postcode or place</label>
-        <input id="destination" type="text" autocomplete="postal-code" autocapitalize="characters" spellcheck="false" placeholder="e.g. SW1A 1AA" aria-label="Destination postcode or place">
-        <button id="postcode-pad-button" type="button">Enter postcode with controls</button>
-        <button type="submit">Find destination</button>
-      </form>
+      <button id="postcode-pad-button" class="wide" type="button">Enter destination postcode</button>
       <div id="search-results" class="results" aria-live="polite"></div>
       <button id="demo-button" class="quiet" type="button">Preview a sample route</button>
       <div class="credit">Map data © OpenStreetMap contributors · Free public routing preview</div>

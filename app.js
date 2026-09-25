@@ -22,6 +22,7 @@ let rerouting = false;
 let lastAnnounced = -1;
 let mapCenters = new WeakMap();
 let postcodeBuffer = '';
+let pendingPostcode = null;
 
 function showScreen(name) {
   screen = name;
@@ -59,8 +60,6 @@ for (const row of ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM', '1234567890']) {
   }
 }
 $('postcode-pad-button').addEventListener('click', () => {
-  const existing = $('destination').value.trim();
-  postcodeBuffer = /^[A-Z0-9 ]{0,8}$/i.test(existing) ? normalizedPostcode(existing) : '';
   updatePostcodePad();
   $('postcode-pad').classList.remove('hidden');
   document.querySelector('#postcode-keys button').focus();
@@ -70,9 +69,15 @@ $('postcode-clear').addEventListener('click', () => { postcodeBuffer = ''; updat
 $('postcode-cancel').addEventListener('click', closePostcodePad);
 $('postcode-use').addEventListener('click', () => {
   if (!isUkPostcode(postcodeBuffer)) { $('postcode-hint').textContent = 'Enter a full UK postcode, for example SW1A 1AA.'; return; }
-  $('destination').value = displayPostcode(postcodeBuffer);
+  const query = displayPostcode(postcodeBuffer);
+  $('postcode-pad-button').textContent = `Postcode: ${query} · Edit`;
   closePostcodePad();
-  $('destination-form').requestSubmit();
+  $('search-results').replaceChildren();
+  if (validFix(locationFix)) void findPostcode(query);
+  else {
+    pendingPostcode = query;
+    status(`${query} saved. Select Use my location, then search will start.`);
+  }
 });
 function validFix(fix) { return fix && Date.now() - fix.timestamp < 12000 && fix.accuracy <= 60; }
 function coords(fix) { return [fix.lon, fix.lat]; }
@@ -141,7 +146,11 @@ function startWatching() {
     locationFix = { lat: latitude, lon: longitude, accuracy, speed, heading, timestamp: position.timestamp };
     if (screen === 'setup') {
       status(accuracy <= 60 ? `Location ready · accuracy about ${Math.round(accuracy)} m` : `Location found, but accuracy is only about ${Math.round(accuracy)} m. Wait for a clearer fix.`);
-      $('destination-form').classList.remove('hidden');
+      if (pendingPostcode && validFix(locationFix)) {
+        const query = pendingPostcode;
+        pendingPostcode = null;
+        void findPostcode(query);
+      }
     }
     if (screen === 'guidance' && !isDemo) updateGuidance();
   }, error => {
@@ -473,19 +482,14 @@ function stopGuidance() {
 }
 
 $('location-button').addEventListener('click', startWatching);
-$('destination-form').addEventListener('submit', async event => {
-  event.preventDefault();
-  const entered = $('destination').value.trim();
-  const postcode = normalizedPostcode(entered);
-  const query = isUkPostcode(postcode) ? displayPostcode(postcode) : entered;
-  if (isUkPostcode(postcode)) $('destination').value = query;
-  if (query.length < 3) { status('Enter at least three characters for your destination.'); return; }
-  if (!validFix(locationFix)) { status('Wait for a fresh, accurate location first.'); return; }
+async function findPostcode(query) {
+  if (!validFix(locationFix)) { pendingPostcode = query; status(`${query} saved. Waiting for an accurate location.`); return; }
+  pendingPostcode = null;
   status('Finding places…');
   $('search-results').replaceChildren();
   try {
     const results = await searchDestination(query);
-    status(results.length ? 'Choose a destination:' : 'No places found. Try a fuller address.');
+    status(results.length ? 'Choose a destination:' : 'Postcode not found. Check it and try again.');
     for (const result of results) {
       const button = document.createElement('button');
       button.type = 'button';
@@ -501,8 +505,8 @@ $('destination-form').addEventListener('submit', async event => {
       $('search-results').append(button);
     }
     document.querySelector('#search-results button')?.focus();
-  } catch (error) { if (error.name !== 'AbortError') status('Place search unavailable. Try again later.'); }
-});
+  } catch (error) { if (error.name !== 'AbortError') status('Postcode search unavailable. Try again later.'); }
+}
 $('demo-button').addEventListener('click', async () => {
   try {
     status('Loading sample route…');

@@ -9,8 +9,8 @@
   <title>Navigation</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=4">
-  <script src="./app.js?v=4" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=5">
+  <script src="./app.js?v=5" defer></script>
 </head>
 <body>
   <main id="app">
@@ -21,7 +21,7 @@
       <button id="location-button" class="wide" type="button">Use my location</button>
       <button id="postcode-pad-button" class="wide" type="button">Enter destination postcode</button>
       <div id="search-results" class="results" aria-live="polite"></div>
-      <button id="demo-button" class="quiet" type="button">Preview a sample route</button>
+      <button id="demo-button" class="quiet" type="button">Try a sample route</button>
       <div class="credit">Map data © OpenStreetMap contributors · Free public routing preview</div>
     </section>
 
@@ -35,16 +35,6 @@
       <div class="postcode-actions"><button id="postcode-cancel" type="button">Cancel</button><button id="postcode-use" type="button">Find postcode</button></div>
     </section>
 
-    <section id="preview" class="screen hidden">
-      <div class="eyebrow">ROUTE PREVIEW</div>
-      <h1 id="preview-name">Destination</h1>
-      <div id="preview-map" class="map"><div class="basemap"></div><svg viewBox="0 0 536 270" preserveAspectRatio="none" aria-hidden="true"><path class="route-halo"></path><path class="route-line"></path><circle class="maneuver-dot" r="9"></circle><circle class="position-dot" r="8"></circle><path class="position-arrow" d="M0 -15 L11 12 L0 7 L-11 12 Z"></path></svg></div>
-      <p id="preview-summary" class="summary"></p>
-      <button id="start-button" class="wide" type="button">Start guidance</button>
-      <button id="preview-back" class="quiet" type="button">Change destination</button>
-      <p class="fine">Guidance uses your phone location. Check the road and signs for actual restrictions.</p>
-    </section>
-
     <section id="guidance" class="screen hidden">
       <div class="topline"><span id="gps-status">GPS live</span><span id="remaining">—</span></div>
       <div class="instruction">
@@ -55,7 +45,7 @@
       <div id="nav-map" class="map"><div class="basemap"></div><svg viewBox="0 0 536 220" preserveAspectRatio="none" aria-hidden="true"><path class="route-halo"></path><path class="route-line"></path><circle class="maneuver-dot" r="9"></circle><circle class="position-dot" r="8"></circle><path class="position-arrow" d="M0 -15 L11 12 L0 7 L-11 12 Z"></path></svg><div class="nav-pointer" aria-hidden="true"><svg viewBox="0 0 32 38"><path d="M16 2 30 34 16 27 2 34Z"></path></svg></div></div>
       <div class="footer"><div><span class="micro">ETA</span><strong id="eta">—</strong></div><div><span class="micro">MAP LIMIT</span><strong id="speed-limit">—</strong></div><div><span class="micro">SPEED</span><strong id="speed">—</strong></div></div>
       <button id="nav-menu-button" class="menu-button" type="button">Route options</button>
-      <div id="nav-options" class="options hidden"><button id="reroute-button" type="button">Refresh route</button><button id="stop-button" type="button">End guidance</button><button id="close-options" type="button">Close</button></div>
+      <div id="nav-options" class="options hidden"><button id="retry-location-button" type="button">Retry location</button><button id="reroute-button" type="button">Refresh route</button><button id="stop-button" type="button">End guidance</button><button id="close-options" type="button">Close</button></div>
       <div class="credit">Map data © OpenStreetMap contributors</div>
     </section>
   </main>

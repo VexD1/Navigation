@@ -19,10 +19,10 @@ It cannot draw a line locked to the actual road seen through the lenses. A Web A
 
 1. Open Navigation and choose **Use my location**. Grant location permission. The position comes from the paired phone.
 2. Select **Enter destination postcode**, move between the on-screen letters and numbers, and pinch to add each character. Select **Find postcode** when complete. The space is added automatically. You can enter the postcode before location is ready; search starts when a clear fix arrives. There is no Listen field.
-3. Check the route preview, then choose **Start guidance**. Set the destination before driving.
-4. **Route options** offers a route refresh or end guidance.
+3. Select the postcode search result. Guidance opens automatically when the route is ready. Set the destination before driving.
+4. **Route options** offers location retry, route refresh, or end guidance.
 
-**Preview a sample route** runs a simulated journey near Trafalgar Square without permission or network routing. It is labelled DEMO throughout guidance.
+**Try a sample route** starts a simulated journey near Trafalgar Square without permission or network routing. It is labelled DEMO throughout guidance.
 
 The Web App must stay open. It pauses guidance when GPS is stale or inaccurate, and it cannot guarantee continued updates when the glasses runtime is hidden or suspended. A missed turn triggers a limited reroute attempt. If the free routing service is unavailable, guidance pauses rather than inventing instructions. Check road signs and conditions for every maneuver.
 

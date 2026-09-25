@@ -26,7 +26,7 @@ let pendingPostcode = null;
 
 function showScreen(name) {
   screen = name;
-  for (const id of ['setup', 'preview', 'guidance']) $(id).classList.toggle('hidden', id !== name);
+  for (const id of ['setup', 'guidance']) $(id).classList.toggle('hidden', id !== name);
 }
 
 function status(text) { $('setup-status').textContent = text; }
@@ -198,7 +198,7 @@ async function requestRoute(target, reroute = false) {
   offRouteCount = 0;
   routeUncertain = false;
   if (reroute) updateGuidance();
-  else showPreview();
+  else startGuidance();
   void loadSpeedLimits(next, controller);
 }
 
@@ -213,16 +213,6 @@ async function loadSpeedLimits(targetRoute, controller) {
       if (screen === 'guidance') updateGuidance();
     }
   } catch { /* Speed limits are optional. */ }
-}
-
-function showPreview() {
-  showScreen('preview');
-  $('start-button').focus({ preventScroll: true });
-  $('preview-name').textContent = destination?.name || 'Destination';
-  $('preview-summary').textContent = `${formatDistance(route.distance)} · about ${Math.max(1, Math.round(route.duration / 60))} min`;
-  const middle = route.points[Math.floor(route.points.length / 2)];
-  const zoom = fitZoom(route.points, 536, 270);
-  renderMap($('preview-map'), middle, zoom, route.points, coords(locationFix));
 }
 
 function projectWorld(point, zoom) {
@@ -402,7 +392,8 @@ function beginReroute() {
 }
 
 function updateGuidance() {
-  if (screen !== 'guidance' || !route || !locationFix) return;
+  if (screen !== 'guidance' || !route) return;
+  if (!locationFix) { showUnavailable('Waiting for your phone’s location'); return; }
   if (!isDemo && !validFix(locationFix)) { showUnavailable('GPS unavailable or inaccurate'); return; }
   const near = nearestRoutePoint(locationFix);
   if (!near) { showUnavailable('Route position unavailable'); return; }
@@ -456,9 +447,12 @@ function updateGuidance() {
 }
 
 function startGuidance() {
-  if (!isDemo && !validFix(locationFix)) { showScreen('setup'); status('Wait for a fresh, accurate location before starting.'); return; }
+  if (!route) return;
+  clearInterval(demoTimer);
+  demoTimer = null;
   lastAnnounced = -1;
   showScreen('guidance');
+  $('nav-menu-button').focus({ preventScroll: true });
   updateGuidance();
   if (isDemo) {
     let cursor = 0;
@@ -522,14 +516,18 @@ $('demo-button').addEventListener('click', async () => {
     destination = { name: 'St Paul’s Cathedral', lat: 51.5146, lon: -0.1022 };
     isDemo = true;
     locationFix = { lon: route.points[0][0], lat: route.points[0][1], accuracy: 8, speed: 8, heading: null, timestamp: Date.now() };
-    showPreview();
+    startGuidance();
   } catch { status('Sample route is unavailable.'); }
 });
-$('start-button').addEventListener('click', startGuidance);
-$('preview-back').addEventListener('click', () => { if (isDemo) { isDemo = false; route = null; destination = null; locationFix = null; } showScreen('setup'); });
 $('nav-menu-button').addEventListener('click', () => { $('nav-options').classList.remove('hidden'); $('reroute-button').focus(); });
 $('close-options').addEventListener('click', () => { $('nav-options').classList.add('hidden'); $('nav-menu-button').focus(); });
 $('stop-button').addEventListener('click', stopGuidance);
+$('retry-location-button').addEventListener('click', () => {
+  $('nav-options').classList.add('hidden');
+  showUnavailable('Waiting for your phone’s location');
+  startWatching();
+  $('nav-menu-button').focus({ preventScroll: true });
+});
 $('reroute-button').addEventListener('click', async () => {
   $('nav-options').classList.add('hidden');
   if (isDemo) { updateGuidance(); return; }
@@ -543,7 +541,7 @@ document.addEventListener('visibilitychange', () => {
     if (watchId !== null) navigator.geolocation.clearWatch(watchId);
     watchId = null;
     if (screen === 'guidance' && !isDemo) showUnavailable('App inactive · GPS paused');
-  } else if (!isDemo && (screen === 'guidance' || screen === 'setup' || screen === 'preview')) {
+  } else if (!isDemo && (screen === 'guidance' || screen === 'setup')) {
     locationFix = null;
     startWatching();
   }

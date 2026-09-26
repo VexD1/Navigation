@@ -11,6 +11,7 @@ In the Meta AI phone app, add **Navigation** as a Web App connection using **htt
 - A large next-turn arrow, compact instruction, road name, remaining distance, current time, and ETA.
 - A heading-up street map with a forward-tilted perspective that shows more road ahead and zooms closer near turns. The white position arrow stays near the bottom centre; the road and route move beneath it. A ring marks the next maneuver. This is a tilted view of flat map tiles, without 3D buildings or terrain.
 - A mapped speed limit when the routing data and GPS match are good enough. The value can be missing or outdated; road signs take precedence.
+- While on route, the arrow follows the matched route position and the map faces along that road, rather than using the phone's heading. A position too far from the route pauses guidance while it checks or recalculates.
 - Lane guidance if the routing service supplies usable lane data for the upcoming turn. No lane is guessed from road type.
 
 It cannot draw a line locked to the actual road seen through the lenses. A Web App has no documented road-alignment or spatial-anchor API. The line is on the **map**.

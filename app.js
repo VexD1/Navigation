@@ -15,6 +15,7 @@ let searchController = null;
 let lastSearchAt = 0;
 let lastRerouteAt = 0;
 let offRouteCount = 0;
+let lastDeviationFix = null;
 let progress = 0;
 let segmentIndex = 0;
 let routeUncertain = false;
@@ -202,6 +203,7 @@ async function requestRoute(target, reroute = false) {
   progress = 0;
   segmentIndex = 0;
   offRouteCount = 0;
+  lastDeviationFix = null;
   routeUncertain = false;
   if (reroute) updateGuidance();
   else startGuidance();
@@ -244,6 +246,22 @@ function routeBearing(a, b) {
   const x = Math.sin(delta) * Math.cos(lat2);
   const y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(delta);
   return (Math.atan2(x, y) * 180 / Math.PI + 360) % 360;
+}
+function matchedRouteHeading(near) {
+  let index = near.segment;
+  // At a junction, face the outgoing segment rather than the road just passed.
+  if (index < route.points.length - 2 && meters(near.point, route.points[index + 1]) < 1) index++;
+  for (; index < route.points.length - 1; index++) {
+    const a = projectWorld(route.points[index], 18);
+    const b = projectWorld(route.points[index + 1], 18);
+    if (meters(route.points[index], route.points[index + 1]) > 0.5) {
+      return (Math.atan2(b[0] - a[0], a[1] - b[1]) * 180 / Math.PI + 360) % 360;
+    }
+  }
+  for (index = route.points.length - 2; index >= 0; index--) {
+    if (meters(route.points[index], route.points[index + 1]) > 0.5) return routeBearing(route.points[index], route.points[index + 1]);
+  }
+  return 0;
 }
 function cameraAheadOf(marker, zoom, heading, height) {
   const [px, py] = projectWorld(marker, zoom);
@@ -304,8 +322,7 @@ function renderMap(element, center, zoom, points, marker, heading = null, turn =
   const svg = element.querySelector('svg');
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
   const rotation = Number.isFinite(heading) ? `rotate(${-heading}deg)` : 'none';
-  element.querySelector('.basemap').style.transform = rotation;
-  svg.style.transform = rotation;
+  element.querySelector('.map-heading').style.transform = rotation;
   const path = points.map((p, i) => { const [x, y] = local(p); return `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`; }).join(' ');
   for (const selector of ['.route-halo', '.route-line']) element.querySelector(selector).setAttribute('d', path);
   const [mx, my] = local(marker);
@@ -416,20 +433,24 @@ function updateGuidance() {
   if (!isDemo && !validFix(locationFix)) { showUnavailable('GPS unavailable or inaccurate'); return; }
   const near = nearestRoutePoint(locationFix);
   if (!near) { showUnavailable('Route position unavailable'); return; }
-  const deviationLimit = Math.max(60, locationFix.accuracy * 2);
+  const deviationLimit = Math.max(35, Math.min(60, locationFix.accuracy));
   if (!isDemo && routeUncertain) {
     if (near.lateral <= deviationLimit) { routeUncertain = false; offRouteCount = 0; }
     else { showUnavailable('Off route · refreshing'); beginReroute(); return; }
   }
   $('nav-map').classList.remove('uncertain');
   if (!isDemo && near.lateral > deviationLimit) {
-    offRouteCount++;
+    if (lastDeviationFix !== locationFix.timestamp) {
+      offRouteCount++;
+      lastDeviationFix = locationFix.timestamp;
+    }
+    showUnavailable('Off route · checking position');
     if (offRouteCount >= 3) {
       routeUncertain = true;
       showUnavailable('Off route · refreshing');
       beginReroute();
-      return;
     }
+    return;
   } else offRouteCount = 0;
   progress = Math.max(progress - 30, near.along);
   segmentIndex = near.segment;
@@ -450,10 +471,10 @@ function updateGuidance() {
   $('speed-limit').textContent = segmentConfident && edge ? formatLimit(Number(edge.speed_limit)) : '—';
   if (segmentConfident) renderLanes(maneuver, distance);
   else $('lane-panel').classList.add('hidden');
-  const heading = Number.isFinite(locationFix.heading) && locationFix.speed >= 2 ? locationFix.heading : routeBearing(route.points[segmentIndex], route.points[Math.min(segmentIndex + 1, route.points.length - 1)]);
+  const heading = matchedRouteHeading(near);
   const zoom = distance < 60 ? 19.25 : distance < 180 ? 18.35 : distance < 550 ? 17.35 : 16.35;
   const mapHeight = $('nav-map').clientHeight || 220;
-  const mapPosition = segmentConfident ? near.point : coords(locationFix);
+  const mapPosition = near.point;
   const center = cameraAheadOf(mapPosition, zoom, heading, mapHeight);
   const turnPoint = maneuver ? route.points[maneuver.index] : null;
   renderMap($('nav-map'), center, zoom, route.points, mapPosition, heading, turnPoint);

@@ -37,7 +37,8 @@ h1{font-size:40px;line-height:1.07;letter-spacing:-.04em;margin:0 0 16px}
 .basemap{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.34;filter:grayscale(1) brightness(.8)}
 .tile{position:absolute;width:256px;height:256px;max-width:none;pointer-events:none}
 .map-plane{position:absolute;inset:0;transform-origin:50% calc(100% - 59px);transform:perspective(650px) rotateX(35deg);pointer-events:none}
-.map-plane>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.map-heading{position:absolute;inset:0;transform-origin:50% 50%}
+.map-heading>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .route-halo{fill:none;stroke:#06191d;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
 .route-line{fill:none;stroke:#5cf0db;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
 .position-dot{fill:#fff;stroke:#28cfbd;stroke-width:4}
@@ -65,6 +66,7 @@ h1{font-size:40px;line-height:1.07;letter-spacing:-.04em;margin:0 0 16px}
 .lane.valid{border-color:#72a6a4;color:#c3dad8}
 #nav-map{height:auto;min-height:0;flex:1 1 0}
 #nav-map.uncertain{opacity:.25}
+#nav-map.uncertain .nav-pointer{visibility:hidden}
 .footer{display:flex;gap:5px;justify-content:space-between;min-height:54px;flex:none}
 .footer>div{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;background:#0a181c;border-radius:12px;padding:8px 10px}
 .footer .micro{font-size:10px;white-space:nowrap}
